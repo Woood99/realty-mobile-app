@@ -1,20 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useRef, useState, useEffect } from 'react';
+import { View, BackHandler, Platform, StatusBar } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+   const webviewRef = useRef(null);
+   const [canGoBack, setCanGoBack] = useState(false);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+   useEffect(() => {
+      if (Platform.OS === 'android') {
+         const backAction = () => {
+            if (canGoBack && webviewRef.current) {
+               webviewRef.current.goBack();
+               return true;
+            }
+            return false;
+         };
+
+         const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+         return () => backHandler.remove();
+      }
+   }, [canGoBack]);
+
+   return (
+      <View style={{ flex: 1 }}>
+         <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+         <WebView
+            ref={webviewRef}
+            source={{ uri: 'https://inrut.ru/chat' }}
+            onNavigationStateChange={navState => setCanGoBack(navState.canGoBack)}
+            onShouldStartLoadWithRequest={() => true}
+            javaScriptEnabled
+            domStorageEnabled
+            setSupportMultipleWindows={false}
+            style={{ marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
+         />
+      </View>
+   );
+}
