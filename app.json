@@ -13,17 +13,31 @@
          "backgroundColor": "#ffffff"
       },
       "ios": {
-         "supportsTablet": true
+         "supportsTablet": true,
+         "infoPlist": {
+            "NSCameraUsageDescription": "Требуется доступ к камере для записи видео",
+            "NSMicrophoneUsageDescription": "Требуется доступ к микрофону для записи аудио",
+            "ITSAppUsesNonExemptEncryption": false
+         },
+         "bundleIdentifier": "com.woood99.inrutapp"
       },
       "android": {
          "adaptiveIcon": {
             "foregroundImage": "./assets/adaptive-icon.png",
             "backgroundColor": "#ffffff"
          },
-         "edgeToEdgeEnabled": true
+         "edgeToEdgeEnabled": true,
+         "softwareKeyboardLayoutMode": "resize",
+         "package": "com.woood99.inrutapp",
+         "permissions": ["INTERNET", "CAMERA", "RECORD_AUDIO"]
       },
       "web": {
          "favicon": "./assets/favicon.png"
+      },
+      "extra": {
+         "eas": {
+            "projectId": "9f9c2e02-1304-4f30-b470-3a22b17755a3"
+         }
       }
    }
 }
