@@ -5,6 +5,9 @@
    "main": "index.js",
    "scripts": {
       "start": "expo start",
+      "build-dev": "eas build --profile development --platform android",
+      "build-prod": "eas build --platform android --profile preview",
+      "prebuild": "expo prebuild",
       "dev": "expo start --dev-client",
       "android": "expo run:android",
       "ios": "expo run:ios",
