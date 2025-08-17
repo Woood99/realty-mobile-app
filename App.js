@@ -99,9 +99,9 @@ const injectedJS = `
 
 Notifications.setNotificationHandler({
    handleNotification: async () => ({
-      shouldShowAlert: true, // показывать баннер
-      shouldPlaySound: true, // звук
-      shouldSetBadge: false, // иконка badge
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
    }),
 });
 
@@ -148,6 +148,23 @@ function InnerApp() {
 
    useEffect(() => {
       registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+   }, []);
+
+   useEffect(() => {
+      const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+         const data = response.notification.request.content.data;
+
+         if (data?.dialog_id) {
+            webviewRef.current?.postMessage(
+               JSON.stringify({
+                  type: 'open-dialog',
+                  dialog_id: data.dialog_id,
+               })
+            );
+         }
+      });
+
+      return () => subscription.remove();
    }, []);
 
    useEffect(() => {
