@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "331346727451",
+    "project_id": "inrut-4bd0b",
+    "storage_bucket": "inrut-4bd0b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331346727451:android:86a0edffea29fa669c1ebe",
+        "android_client_info": {
+          "package_name": "com.woood99.inrutapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTg2yW0j9E0kvrexKT7E8w0f3ThtroQfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -16,9 +16,11 @@ import { Camera } from 'expo-camera';
 import { Audio } from 'expo-av';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebView from 'react-native-webview';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
 
-const URL_SITE = 'https://inrut.ru';
-// const URL_SITE = 'http://10.242.255.168:6001';
+// const URL_SITE = 'https://inrut.ru';
+const URL_SITE = 'http://192.168.0.102:6001';
 
 const injectedJS = `
 (function() {
@@ -95,6 +97,39 @@ const injectedJS = `
 })();
 `;
 
+Notifications.setNotificationHandler({
+   handleNotification: async () => ({
+      shouldShowAlert: true, // показывать баннер
+      shouldPlaySound: true, // звук
+      shouldSetBadge: false, // иконка badge
+   }),
+});
+
+async function registerForPushNotificationsAsync() {
+   if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== 'granted') {
+         const { status } = await Notifications.requestPermissionsAsync();
+         finalStatus = status;
+      }
+
+      if (finalStatus !== 'granted') {
+         alert('Нет доступа к уведомлениям!');
+         return null;
+      }
+
+      // Получаем push-токен
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      alert(token);
+      console.log('Expo Push Token:', token);
+      return token;
+   } else {
+      alert('Физическое устройство нужно для пушей!');
+   }
+}
+
 export default function App() {
    return (
       <SafeAreaProvider>
@@ -109,6 +144,11 @@ function InnerApp() {
    const [canGoBack, setCanGoBack] = useState(false);
    const [loading, setLoading] = useState(true);
    const [keyboardHeight, setKeyboardHeight] = useState(0);
+   const [expoPushToken, setExpoPushToken] = useState(null);
+
+   useEffect(() => {
+      registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+   }, []);
 
    useEffect(() => {
       (async () => {
