@@ -19,8 +19,8 @@ import WebView from 'react-native-webview';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 
-// const URL_SITE = 'https://inrut.ru';
-const URL_SITE = 'http://192.168.0.102:6001';
+const URL_SITE = 'https://inrut.ru';
+// const URL_SITE = 'http://192.168.0.102:6001';
 
 const injectedJS = `
 (function() {
