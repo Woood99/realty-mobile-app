@@ -121,7 +121,7 @@ async function registerForPushNotificationsAsync() {
       }
 
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-      // alert(token)
+      alert(token)
 
       console.log('Expo Push Token:', token);
       return token;
