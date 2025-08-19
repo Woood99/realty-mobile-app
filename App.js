@@ -99,9 +99,10 @@ const injectedJS = `
 
 Notifications.setNotificationHandler({
    handleNotification: async () => ({
-      shouldShowBanner: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
+      shouldPlaySound: true, // включить звук
+      shouldSetBadge: true, // обновить бейдж (иконку)
+      shouldShowBanner: true, // показать баннер (alert)
+      shouldShowList: true, // добавить в список уведомлений
    }),
 });
 
