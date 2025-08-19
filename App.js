@@ -99,7 +99,7 @@ const injectedJS = `
 
 Notifications.setNotificationHandler({
    handleNotification: async () => ({
-      shouldShowAlert: true,
+      shouldShowBanner: true,
       shouldPlaySound: true,
       shouldSetBadge: false,
    }),
@@ -116,17 +116,15 @@ async function registerForPushNotificationsAsync() {
       }
 
       if (finalStatus !== 'granted') {
-         alert('Нет доступа к уведомлениям!');
          return null;
       }
 
-      // Получаем push-токен
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-      alert(token);
+      // alert(token)
+
       console.log('Expo Push Token:', token);
       return token;
    } else {
-      alert('Физическое устройство нужно для пушей!');
    }
 }
 
@@ -152,7 +150,7 @@ function InnerApp() {
 
    useEffect(() => {
       const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-         const data = response.notification.request.content.data;
+         const data = response.notification.request.content.data?.data;
 
          if (data?.dialog_id) {
             webviewRef.current?.postMessage(
@@ -234,6 +232,30 @@ function InnerApp() {
       };
    }, []);
 
+   const handleMessage = async event => {
+      try {
+         const data = JSON.parse(event.nativeEvent.data);
+         if (data.type === 'auth' && expoPushToken) {
+            if (data.status === 'logged_in') {
+               console.log('add token', expoPushToken, data);
+            }
+
+            if (data.status === 'logged_out') {
+               console.log('delete token', expoPushToken, data);
+            }
+         }
+
+         if (data.type === 'cookies') {
+            try {
+               const cookies = await CookieManager.get(URL_SITE);
+               await AsyncStorage.setItem('site_cookies', JSON.stringify(cookies));
+            } catch (e) {}
+         }
+      } catch (e) {
+         console.warn('Ошибка парсинга сообщения из WebView:', e);
+      }
+   };
+
    const bottomOffset = Platform.OS === 'ios' ? Math.max(insets.bottom, keyboardHeight) : keyboardHeight;
 
    return (
@@ -255,19 +277,7 @@ function InnerApp() {
                   ref={webviewRef}
                   source={{ uri: `${URL_SITE}/chat` }}
                   injectedJavaScript={injectedJS}
-                  onMessage={async event => {
-                     try {
-                        const data = JSON.parse(event.nativeEvent.data);
-                        if (data && data.type === 'cookies') {
-                           try {
-                              const cookies = await CookieManager.get(URL_SITE);
-                              await AsyncStorage.setItem('site_cookies', JSON.stringify(cookies));
-                           } catch (e) {
-                              console.warn('Ошибка сохранения куков:', e);
-                           }
-                        }
-                     } catch (e) {}
-                  }}
+                  onMessage={handleMessage}
                   onNavigationStateChange={navState => setCanGoBack(navState.canGoBack)}
                   onLoadEnd={() => {
                      CookieManager.get(URL_SITE)
