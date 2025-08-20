@@ -151,15 +151,14 @@ function InnerApp() {
 
    useEffect(() => {
       const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-         const data = response.notification.request.content.data?.data;
+         const data = response.notification.request.content.data;
+         if (!data?.dialog_id) return;
 
-         if (data?.dialog_id) {
-            webviewRef.current?.postMessage(
-               JSON.stringify({
-                  type: 'open-dialog',
-                  dialog_id: data.dialog_id,
-               })
-            );
+         if (data.type === 'message') {
+            webviewRef.current?.postMessage(JSON.stringify(data));
+         }
+         if (data.type === 'incomingCall') {
+            webviewRef.current?.postMessage(JSON.stringify(data));
          }
       });
 
@@ -239,11 +238,12 @@ function InnerApp() {
          if (data.type === 'auth' && expoPushToken) {
             if (data.status === 'logged_in') {
                console.log('add token', expoPushToken, data);
+               // axios.post
             }
 
-            if (data.status === 'logged_out') {
-               console.log('delete token', expoPushToken, data);
-            }
+            // if (data.status === 'logged_out') {
+            //    console.log('delete token', expoPushToken, data);
+            // }
          }
 
          if (data.type === 'cookies') {
