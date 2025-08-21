@@ -19,6 +19,16 @@ import WebView from 'react-native-webview';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 
+// curl -X POST https://exp.host/--/api/v2/push/send \
+//   -H "Content-Type: application/json" \
+//   -d '{
+//     "to": "ExponentPushToken[85SpWqPRKtAs2bFzNpcCeO]",
+//     "title": "user_name",
+//     "body": "text message",
+//     "sound": "default",
+//     "data": { "dialog_id": 285, "type": "message", "call": null}
+//   }'
+
 const URL_SITE = 'https://inrut.ru';
 // const URL_SITE = 'http://192.168.0.102:6001';
 
@@ -99,10 +109,10 @@ const injectedJS = `
 
 Notifications.setNotificationHandler({
    handleNotification: async () => ({
-      shouldPlaySound: true, // включить звук
-      shouldSetBadge: true, // обновить бейдж (иконку)
-      shouldShowBanner: true, // показать баннер (alert)
-      shouldShowList: true, // добавить в список уведомлений
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      shouldShowBanner: true,
+      shouldShowList: true,
    }),
 });
 
@@ -121,7 +131,7 @@ async function registerForPushNotificationsAsync() {
       }
 
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-      alert(token)
+      alert(token);
 
       console.log('Expo Push Token:', token);
       return token;
